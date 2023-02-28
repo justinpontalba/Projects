@@ -254,6 +254,8 @@ response = co.generate(
     max_tokens=100,
 )
 print(response.generations[0].text)
+# Response
+# a system of hidden rules, massive costs, and massive conflicts of interest. Call your MP..In Toronto we had the Competition Bureau take on the real estate boards and they won. Maybe something similar could be done in the rest of the country. At least get the issue in front of government..Is there anything we can do as a group to sue the real estate board or get a class action lawsuit going? That would be the only way to change things..In this country you are paying for the
 
 
 # %%
