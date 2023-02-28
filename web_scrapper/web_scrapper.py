@@ -11,6 +11,7 @@ from bs4 import BeautifulSoup
 import praw
 import os
 from dotenv import load_dotenv
+import cohere
 load_dotenv()
 
 # %% API Credentials
@@ -19,6 +20,8 @@ client_secret = os.environ.get('client_secret')
 user_agent = os.environ.get('user_agent')
 username = os.environ.get('user_name')
 password = os.environ.get('password')
+cohere_API = os.environ.get('cohere_API')
+
 
 # %%
 
@@ -171,11 +174,7 @@ def preprocess(comments):
 # %% Get Comments
 titles, comments = get_comments('PersonalFinanceCanada', 'top', limit=6)
 
-
-# %%
-summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
-
-# %%  Clustering
+# %%  Perform Clustering
 embedder = SentenceTransformer('all-MiniLM-L6-v2')
 articles = []
 
@@ -215,30 +214,46 @@ for title, comment in zip(titles, comments):
     docs_df['Topic Label'] = cluster_label_col
 
     articles.append(docs_df)
-
 # %%
+summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
+for article in articles:
+    cluster_sum = []
+    cluster_label = []
+    for cluster in np.unique(article['Topic']):
 
-post = []
-# for article in articles:
+        same_cluster = article[article['Topic'] == cluster]
+        combined = ".".join(same_cluster['Doc'])
 
-cluster_sum = []
-cluster_label = []
-for cluster in np.unique(article['Topic']):
+        print("length:", len(combined))
 
-    same_cluster = article[article['Topic'] == cluster]
-    combined = ".".join(same_cluster['Doc'])
-
-    print("length:", len(combined))
-
-    try:
-        summary = summarizer(combined, max_length=250,
-                             min_length=30, do_sample=False)
-    except IndexError:
-        print("Index Error")
-        continue
-    cluster_sum.append(summary)
-    cluster_label.append(cluster)
+        try:
+            summary = summarizer(combined, max_length=250,
+                                 min_length=30, do_sample=False)
+        except IndexError:
+            print("Index Error")
+            continue
+        cluster_sum.append(summary)
+        cluster_label.append(cluster)
 
 # %%
 df_sum = pd.DataFrame({'summary': cluster_sum, 'label': cluster_label})
+
+# %% Using Cohere
+co = cohere.Client(cohere_API)
+article = articles[0]
+cluster = np.unique(article['Topic'])[0]
+cluster_sum = []
+cluster_label = []
+same_cluster = article[article['Topic'] == cluster]
+combined = ".".join(same_cluster['Doc'])
+prompt = "Passage:" + combined + "TLDR:"
+# prompt = f"""Passage:I hate to keep saying this but maybe this is a good story for CTV News consumer reports. It might get the issue out further and you could start a petition then go to your local government.  u/PatForanCTVNews.In Quebec we have DuProprio, which is actually really popular for selling without an agent. Is there no such thing in the ROC?.Leave a google review for the agent, the only way things are going to change is if they fear for their brand..It’d be great if someone or OP shared a letter they sent to their MP asking for transparency in the real estate industry, that way we can all use it as a template to send to our respectful MPs.I am sorry for this. REs are a scam. The only thing we can do is get on our MPPs to fix legislation and take power away from them..Canada has a long and proud history of monopolies. You can either embrace it or pack your tent and head north..Call your mp, both provincial and federal, call your mayor, call your premiere, start a petition, tell your friends. There needs to be change..Hi highly suggest and hope u share ur story to CBC marketplace. They find issues for consumers and really make the government act - cus the gov just doesnt care enough and slow to act without a little bad press on them..The protectionism we have in some industries in Canada is a freaking joke!  \nWe're talking about the single largest transaction that most people would make in their lifetime and the entire process is obfuscated AF TLDR:"""
+
+response = co.generate(
+    prompt=prompt,
+    max_tokens=100,
+)
+print(response.generations[0].text)
+
+
 # %%
