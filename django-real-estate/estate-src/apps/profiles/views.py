@@ -16,6 +16,7 @@ class AgentListAPIView(generics.ListAPIView):
 
 """
     from rest_framework import api_view, permissions
+
     @api_view(["GET"])
     @permission_classes((permissions.IsAuthenticated))
     def get_all_agents(request):

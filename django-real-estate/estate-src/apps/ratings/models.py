@@ -1,8 +1,10 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from real_estate.settings.base import AUTH_USER_MODEL
+
 from apps.common.models import TimeStampedUUIDModel
 from apps.profiles.models import Profile
+from real_estate.settings.base import AUTH_USER_MODEL
+
 
 class Rating(TimeStampedUUIDModel):
     class Range(models.IntegerChoices):
@@ -35,15 +37,6 @@ class Rating(TimeStampedUUIDModel):
 
     class Meta:
         unique_together = ["rater", "agent"]
-    
+
     def __str__(self):
         return f"{self.agent} rated at {self.rating}"
-
-
-
-
-
-
-
-
-# Create your models here.

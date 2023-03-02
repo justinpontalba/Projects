@@ -79,6 +79,3 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
         if instance.top_agent:
             representation["top_agent"] = True
         return representation
-
-
-
