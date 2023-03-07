@@ -2,6 +2,7 @@ import json
 
 from rest_framework.renderers import JSONOpenAPIRenderer
 
+
 class ProfileJSONRenderer(JSONOpenAPIRenderer):
     charset = 'utf-8'
 

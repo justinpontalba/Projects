@@ -10,10 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
-from pathlib import Path
-
-import environ
 import os
+from pathlib import Path
+from datetime import timedelta
+import environ
 
 env = environ.Env(DEBUG=(bool, False))
 
@@ -156,7 +156,7 @@ REST_FRAMEWORK = {
 
     )
 }
-from datetime import timedelta
+
 
 SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": (
