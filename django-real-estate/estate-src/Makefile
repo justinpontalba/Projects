@@ -39,10 +39,10 @@ estate-db:
 	docker-compose exec postgres-db psql --username=postgres --dbname=estate
 
 test:
-	docker-compose exec api pytest -p no:warnings --cov=.
+	docker compose exec api pytest -p no:warnings --cov=.
 
 test-html:
-	docker-compose exec api pytest -p no:warnings --cov. --cov-report html
+	docker compose exec api pytest -p no:warnings --cov=. --cov-report html
 
 flake8:
 	docker-compose exec api flake8 .
