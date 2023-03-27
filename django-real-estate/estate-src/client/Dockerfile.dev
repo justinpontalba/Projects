@@ -1,0 +1,18 @@
+ARG NODE_VERSION=16.14-alpine
+
+FROM node:${NODE_VERSION} as node
+
+LABEL version="1.0"
+LABEL description="React Frontend for the Real Estate API"
+
+WORKDIR /app
+
+COPY ./package*.json ./
+
+RUN npm install 
+
+COPY . .
+
+CMD ["npm", "run", "start"]
+
+
