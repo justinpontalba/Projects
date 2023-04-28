@@ -47,7 +47,6 @@ for epoch in tqdm(range(1, epochs+1)):
   val_f1 = f1_score_func(predictions, true_vals)
   tqdm.write(f'Validation loss:{val_loss}')
   tqdm.write(f'F1 Score (weighted): {val_f1}')
-  
 ```
 ## Results
 Class: happy
