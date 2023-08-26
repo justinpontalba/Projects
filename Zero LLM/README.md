@@ -11,7 +11,7 @@ Example tables are located in the /data folder as .csv files.
 4.	Automatically generate data mapping code for each column display in the final Template format. For example, for date columns, they may be in different formats, and it is necessary to change the order from dd.mm.yyyy to mm.dd.yyyy. The person can check the code (or pseudocode) that will perform the mapping.
 5.	Check that all data has been transferred correctly; if any errors occur, issue an alert to the person.
 ## There is also an additional challenge* (Not required but would be a big plus):
-Since such operations can be repeated quite often, and a person will edit the transformation logic, it is desirable to save this data and have the ability to retrain on it. Propose an approach for retraining and try to implement such retraining on synthetic examples (you can come up with them using GPT =))
+Since such operations can be repeated quite often, and a person will edit the transformation logic, it is desirable to save this data and have the ability to retrain on it. Propose an approach for retraining and try to implement such retraining on synthetic examples (you can come up with them using GPT)
 ## Expected result:
 1. Code on GitHub using OpenAI API, Langchain, and other LLMOps tools of your choice.
 2. An interface in which you can perform such an operation. Place the interface in the public domain for testing work
