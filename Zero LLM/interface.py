@@ -1,9 +1,11 @@
 # %%
 import streamlit as st
 import pandas as pd
+import numpy as np
 import json
 from agent import query_agent, create_agent
 from io import StringIO
+from utils import find_similar
 
 # %%
 def decode_response(response: str) -> dict:
@@ -70,15 +72,18 @@ if __name__ == "__main__":
         with data_container:
             table1, table2 = st.columns(2)
             with table1:
-                selected_columns = st.multiselect("Select columns", df_transform.columns)
+                # selected_columns = st.multiselect("Select columns", df_transform.columns)
                 st.caption("Table to Transform")
                 st.dataframe(df_transform)
-                if selected_columns:
-                    selected_df = df_transform.copy()
-                    selected_df = selected_df[selected_columns]
-                    st.write("Selected Columns:")
-                    st.dataframe(selected_df)
+                # if selected_columns:
+                #     selected_df = df_transform.copy()
+                #     selected_df = selected_df[selected_columns]
+                #     st.write("Selected Columns:")
+                #     st.dataframe(selected_df)
             with table2:
                 st.caption("Template Table")
                 st.dataframe(df_template)
-
+        if st.button("Analyze Table", type="primary"):
+            matches, candidates = find_similar(df_template, df_transform)
+            st.json(matches)
+            st.json(candidates)
