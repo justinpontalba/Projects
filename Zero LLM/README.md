@@ -25,3 +25,14 @@ Since such operations can be repeated quite often, and a person will edit the tr
 - The same for table B.
 3. Your thoughts on edge cases and how they can be overcome
 
+## Approach
+### Requirememts
+- python==3.11.4
+```
+pip install -r requirements.txt
+```
+- Run app
+```
+streamlit run interface.py     
+```
+
