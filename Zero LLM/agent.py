@@ -1,6 +1,7 @@
 from langchain import OpenAI
 from langchain.agents import create_pandas_dataframe_agent
 import pandas as pd
+import json
 
 # Setting up the api key
 import environ
@@ -10,75 +11,43 @@ environ.Env.read_env()
 
 API_KEY = env("apikey")
 
-def create_agent(filename: str):
-    """
-    Create an agent that can access and use a large language model (LLM).
+# Save JSON object to a file
+def save_json_file(filename, data):
+    with open(filename, 'w') as file:
+        json.dump(data, file, indent=4)
+
+# Load JSON object from a file
+def load_json_file(filename):
+    with open(filename, 'r') as file:
+        data = json.load(file)
+    return data
+
+def decode_response(response: str) -> dict:
+    """This function converts the string response from the model to a dictionary object.
 
     Args:
-        filename: The path to the CSV file that contains the data.
+        response (str): response from the model
 
     Returns:
-        An agent that can access and use the LLM.
+        dict: dictionary with response data
     """
+    return json.loads(response)
 
-    # Create an OpenAI object.
-    llm = OpenAI(openai_api_key=API_KEY)
+def create_and_query_agent(df, prompt, query, path):
 
-    # Read the CSV file into a Pandas DataFrame.
-    df = pd.read_csv(filename)
-
-    # Create a Pandas DataFrame agent.
-    return create_pandas_dataframe_agent(llm, df, verbose=False)
-
-def query_agent(agent, query):
-    """
-    Query an agent and return the response as a string.
-
-    Args:
-        agent: The agent to query.
-        query: The query to ask the agent.
-
-    Returns:
-        The response from the agent as a string.
-    """
-
-    prompt = (
-        """
-            For the following query, if it requires drawing a table, reply as follows:
-            {"table": {"columns": ["column1", "column2", ...], "data": [[value1, value2, ...], [value1, value2, ...], ...]}}
-
-            If the query requires creating a bar chart, reply as follows:
-            {"bar": {"columns": ["A", "B", "C", ...], "data": [25, 24, 10, ...]}}
-
-            If the query requires creating a line chart, reply as follows:
-            {"line": {"columns": ["A", "B", "C", ...], "data": [25, 24, 10, ...]}}
-
-            There can only be two types of chart, "bar" and "line".
-
-            If it is just asking a question that requires neither, reply as follows:
-            {"answer": "answer"}
-            Example:
-            {"answer": "The title with the highest rating is 'Gilead'"}
-
-            If you do not know the answer, reply as follows:
-            {"answer": "I do not know."}
-
-            Return all output as a string.
-
-            All strings in "columns" list and data list, should be in double quotes,
-
-            For example: {"columns": ["title", "ratings_count"], "data": [["Gilead", 361], ["Spider's Web", 5164]]}
-
-            Lets think step by step.
-
-            Below is the query.
-            Query: 
-            """
-        + query
-    )
+    output = load_json_file(path)
+    
+    # llm = OpenAI(temperature=0, openai_api_key=API_KEY)
+    # agent = create_pandas_dataframe_agent(llm, df, verbose=False)
 
     # Run the prompt through the agent.
-    response = agent.run(prompt)
+    # response = agent.run(prompt + query)
+
+    # try:
+    #     output = decode_response(response.__str__())
+
+    # except Exception:
+    #     output = response.__str__()
 
     # Convert the response to a string.
-    return response.__str__()
+    return output

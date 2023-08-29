@@ -3,8 +3,23 @@
 import pandas as pd
 import numpy as np
 from sentence_transformers import SentenceTransformer, util
+from agent import create_and_query_agent
+
 
 # %%
+def drop_keys_and_values(target_dict, reference_dict):
+    print(target_dict)
+    print(reference_dict)
+    keys_to_drop = []
+    for key, values in target_dict.items():
+        if key in list(reference_dict.keys()):
+            keys_to_drop.append(key)
+
+    for key in keys_to_drop:
+        target_dict.pop(key, None)
+    
+    return target_dict
+
 def switch_keys_values(dictionary):
     switched_dict = {}
     
@@ -53,7 +68,33 @@ def find_similar(template, table):
         candidate_matches[key] = cand_list
             
     matching_cols = {key: value for key, value in matching_cols.items() if value}
+    matching_cols = switch_keys_values(matching_cols)
     candidate_matches = {key: value for key, value in candidate_matches.items() if value}
+    candidate_matches = switch_keys_values(candidate_matches)
+    candidate_matches = drop_keys_and_values(candidate_matches,matching_cols)
                 
-    return switch_keys_values(matching_cols), switch_keys_values(candidate_matches)
+    return matching_cols, candidate_matches
+
+def analyze_button(template_df, table):
+    query = "provide a description of each column in the table"
+    prompt = (
+        """
+            For the following query, if it requires retrieving descriptions of the table reply using the following as a template:
+            {
+                "column 1" : "description",
+                "column 2" : "description",
+                "column 3" : "description"
+            }
+            Ensure that the keys and values are enclosed in double quotes as opposed to single.
+            
+            Below is the query.
+            Query: 
+            """
+        + query
+    )
+
+    response_template = create_and_query_agent(template_df, prompt, query, r"C:\Users\Justi\Downloads\output_response1.json")
+    response_table = create_and_query_agent(table, prompt, query,r"C:\Users\Justi\Downloads\output_response2.json")
+
+    return response_template, response_table
                 
