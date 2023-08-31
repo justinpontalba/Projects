@@ -33,21 +33,25 @@ def decode_response(response: str) -> dict:
     """
     return json.loads(response)
 
-def create_and_query_agent(df, prompt, query, path):
+def create_and_query_agent(df, prompt, query):
 
-    output = load_json_file(path)
+    # output = load_json_file(path)
     
-    # llm = OpenAI(temperature=0, openai_api_key=API_KEY)
-    # agent = create_pandas_dataframe_agent(llm, df, verbose=False)
+    llm = OpenAI(temperature=0, openai_api_key=API_KEY)
+    agent = create_pandas_dataframe_agent(llm, df, verbose=False)
 
     # Run the prompt through the agent.
-    # response = agent.run(prompt + query)
+    response = agent.run(prompt + query)
 
-    # try:
-    #     output = decode_response(response.__str__())
+    try:
+        output = decode_response(response.__str__())
 
-    # except Exception:
-    #     output = response.__str__()
+    except Exception:
+
+        try: 
+            output = response.__str__()
+        except Exception:
+            output = response['final_answer']
 
     # Convert the response to a string.
     return output

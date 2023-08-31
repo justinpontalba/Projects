@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from sentence_transformers import SentenceTransformer, util
 from agent import create_and_query_agent
+import ast
 
 
 # %%
@@ -93,8 +94,147 @@ def analyze_button(template_df, table):
         + query
     )
 
-    response_template = create_and_query_agent(template_df, prompt, query, r"C:\Users\Justi\Downloads\output_response1.json")
-    response_table = create_and_query_agent(table, prompt, query,r"C:\Users\Justi\Downloads\output_response2.json")
+    response_template = create_and_query_agent(template_df, prompt, query)
+    response_table = create_and_query_agent(table, prompt, query)
 
     return response_template, response_table
+
+
                 
+def session_state_to_dict(session_state, matches, candidates):
+
+    transform_dict = {}
+    sess_dict = {}
+
+    print(f"matches:{matches}")
+    print(f"candidates:{candidates}")
+
+    for i,j in zip(session_state.row, session_state.row.index):
+        sess_dict[j] = i
+
+    print(f"sess dict:{sess_dict}")
+    for key, values in matches.items():
+
+        try:
+
+            if len(values) > 1:
+                transform_dict[key] = matches[key][0]
+
+            else:
+                transform_dict[key] = matches[key][0]
+        except Exception:
+            continue
+    
+    for key_2, values_2 in candidates.items():
+
+        try:
+            if len(values_2) > 1:
+
+                transform_dict[key_2] =  sess_dict[key_2]
+        except Exception:
+            continue
+    
+    return transform_dict
+
+def transformation_query(candidate, template):
+
+    query = "Generate pseudo code in plain english of how to transform the format of the contents of the first dataframe to the format of the contents of the second dataframe. Include details of what specific characters may be removed or added to accomplish the transformation."
+    prompt = (
+        """
+            For the following query, format the response as pesudo code that can then be used as instructions for the GPT completion end-point to follow. If the columns are equal return "No transformations required".
+            Include column names in the pseudo code.
+            Query: 
+            """
+        + query
+    )
+    
+    response = create_and_query_agent([candidate,template], prompt, query)
+    output = response.__str__()
+    
+    return output
+
+def get_transformations(transform_dict, candidate_df, template_df):
+    
+    temp_col = []
+    cand_col = []
+    response_col = []
+    
+    for key1, key2 in transform_dict.items():
+        template = template_df.filter([key1])
+        candidate = candidate_df.filter([key2])
+        
+        try:
+            response = transformation_query(candidate, template)
+        except Exception:
+            response = '[Error]'
+        
+        temp_col.append(key1)
+        cand_col.append(key2)
+        
+        response_col.append(response)
+    
+    df = pd.DataFrame({'Candidate Columns': cand_col, 'Template Columns': temp_col, 'Transformation Description':response_col})
+    
+    return df
+
+def apply_transformations_agent(query, candidate, template):
+    
+
+    query = "Apply the stated transformation to the contents of the first dataframe. The transformations should be applied to the format of the contents. The response should be a python list and be the same length as the original dataframe."
+    prompt = (
+        """
+            For the following query, the response should be formatted as:
+            ["transformed contents 1", "transformed contents 2", "transformed contents 3"]
+            """
+        + query
+    )
+    try:
+        response = create_and_query_agent([candidate,template], prompt, query)
+        output = response.__str__()
+    except Exception:
+        output = "[Error]"
+        
+    return output
+
+def apply_transformations(transform_df, candidate_df, template_df):
+    
+    transformed_contents = []
+    cols = [] 
+    
+    for i,j,k in zip(transform_df['Candidate Columns'], transform_df['Template Columns'], transform_df['Transformation Description']):
+        if pd.isna(k):
+            cols.append(i)
+            transformed_contents.append(list(candidate_df[i]))
+        else:
+            print(f"Instruction: {k}")
+            template = template_df.filter([j])
+            candidate = candidate_df.filter([i])
+            response = apply_transformations_agent(k, candidate, template)
+            transformed_contents.append(ast.literal_eval(response))
+            cols.append(i)
+    
+    # Create a dictionary with column names as keys and corresponding data as values
+    data_dict = {col_name: col_data for col_name, col_data in zip(cols, transformed_contents)}
+
+    # Create a DataFrame
+    df = pd.DataFrame(data_dict)
+
+    return df
+
+def filter_out_matches(matches, df_transform):
+
+    cols_needed = []
+    for key,values in matches.items():
+        cols_needed.append(values[0])
+    
+    df = df_transform.filter(cols_needed)
+
+    return df
+
+def is_dict_empty(dictionary):
+    if isinstance(dictionary, dict):
+        return not bool(dictionary)  # Returns True if the dictionary is empty, otherwise False
+    else:
+        raise ValueError("Input is not a dictionary")
+
+    

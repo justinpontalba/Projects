@@ -1,0 +1,6 @@
+,Candidate Columns,Template Columns,Transformation Description
+0,FullName,EmployeeName,n/a
+1,Insurance_Type,Plan,n/a
+2,Date_of_Policy,Date,"Replace the ""/"" character with a ""-"", and remove the ""-"" character."
+3,Policy_No,PolicyNumber," Replace the ""-"" with ""/"" in the Policy_No column and then remove the ""-"" in the same column."
+4,Monthly_Premium,Premium,"Convert the content to a string format using the astype() method and the ""-"" must be replaced with ""/"" using the str.replace() method."

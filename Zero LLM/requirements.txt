@@ -1,7 +1,7 @@
+numpy
 langchain 
 openai 
 streamlit 
 python-environ 
 tabulate
 sentence-transformers
-numpy==1.23.4

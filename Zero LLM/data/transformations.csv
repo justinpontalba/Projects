@@ -1,0 +1,6 @@
+﻿Candidate Columns,Template Columns,Transformation Description
+FullName,EmployeeName,n/a
+Insurance_Type,Plan,n/a
+Date_of_Policy,Date,Replace the '/' character in the 'Date_of_Policy' column of df1 with a '-' character.
+Policy_No,PolicyNumber,"Replace the hyphen in the Policy_No column with an empty string: df1['Policy_No'].str.replace('-', '')"
+Monthly_Premium,Premium,Rename the column 'Monthly_Premium' to 'Premium' in the first dataframe.
