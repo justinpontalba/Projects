@@ -30,6 +30,10 @@ Since such operations can be repeated quite often, and a person will edit the tr
 - python==3.11.4
 
 ### Set-up
+Within the project folder create a _.env_ filder containing an api key for openai in the following format
+```
+apikey=sk-...
+```
 ```
 conda env create -f environment.yml
 conda activate zerollm
