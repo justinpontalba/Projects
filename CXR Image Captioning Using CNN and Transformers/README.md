@@ -49,3 +49,7 @@ VALID_SET_AUG = False
 TEST_SET = True
 
 ### My results
+Input Image
+![2695_IM-1166-1001 dcm](https://github.com/justinpontalba/Projects/assets/58340716/5188427c-bdde-407d-b021-258f8681d00f)
+**Ouput Report**: _the heart is normal in size the mediastinum is stable the lungs are hypoinflated but clear without evidence of infiltrate there is no pneumothorax or effusionno acute cardiopulmonary disease_
+**Actual Report**: _The cardiac contours are normal. The lungs are hyperinflated with flattened diaphragms. No acute pulmonary findings. Thoracic spondylosis.No acute process._
