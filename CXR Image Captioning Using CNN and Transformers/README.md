@@ -1,6 +1,8 @@
 # Image-Captioning
 This Project was adapted from [here](https://github.com/Dantekk/Image-Captioning/tree/main), and was used to demonstrate how open source projects can be adapted to other use cases fairly quickly with little modification. The following project explores the feasibility of using a CNN and Transformer encoder/decoder framework to provide captions to Chest X-ray Images. 
 
+**This project did not consider nor validate the clinical correctness of the generated captions to the ground truth and is the subject of future work.
+
 ## Dataset 
 The model has been trained on Frontal Chest X-Ray Images from the (NIH Open I Database)[https://openi.nlm.nih.gov/]
 - Number of training images: 3054
@@ -50,8 +52,10 @@ TEST_SET = True
 
 ```
 ### My results
-Input Image
-![2695_IM-1166-1001 dcm](https://github.com/justinpontalba/Projects/assets/58340716/5188427c-bdde-407d-b021-258f8681d00f)
+**Input Image**
+
+<img width="524" alt="cxr" src="https://github.com/justinpontalba/Projects/assets/58340716/12c4720b-a193-494f-8c0c-a8b7a8956cdb">
+
 **Ouput Report**: _the heart is normal in size the mediastinum is stable the lungs are hypoinflated but clear without evidence of infiltrate there is no pneumothorax or effusionno acute cardiopulmonary disease_
 
 **Actual Report**: _The cardiac contours are normal. The lungs are hyperinflated with flattened diaphragms. No acute pulmonary findings. Thoracic spondylosis.No acute process._
